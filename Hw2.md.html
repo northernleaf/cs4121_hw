@@ -1,0 +1,493 @@
+<html>
+<head>
+<title>Hw2.md</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #a9b7c6;}
+.s3 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Hw2.md</font>
+</center></td></tr></table>
+<pre><span class="s0"># </span><span class="s2">Written HW</span>
+
+<span class="s2">This is the first and only written HW for CSEE 4121. Please either type or scan your solutions to these problems. Submit your clear written solutions in PDF format on Gradescope </span><span class="s1">(</span><span class="s2">more details at the bottom</span><span class="s1">)</span><span class="s2">.</span>
+
+<span class="s2">Due Date</span><span class="s1">: **</span><span class="s2">March 4, 2020, 11</span><span class="s1">:</span><span class="s2">59 AM</span><span class="s1">** (</span><span class="s2">1 minute before noon</span><span class="s1">!)</span>
+
+<span class="s0"># </span><span class="s2">Question 1</span>
+
+<span class="s2">Suppose that you are hired to design a database system for a university. We have the following data schema</span><span class="s1">:</span>
+<span class="s3">```</span>
+<span class="s3">Students(sid: integer, sname: string, age: real, year: real, gpa: real, majordept: string)</span>
+<span class="s3">Classrooms(clid: integer, cbid: integer, csize: integer)</span>
+<span class="s3">Courses(crid: integer, clid: integer, crsize: integer, crdept: string)</span>
+<span class="s3">Buildings(bid: integer, bname: string, bnum_classrms: integer)</span>
+<span class="s3">```</span>
+<span class="s2">Describe what the following SQL queries look to do in plain English</span><span class="s1">:</span>
+
+<span class="s2">i</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT S.sname, S.age</span>
+<span class="s3">FROM Students as S</span>
+<span class="s3">WHERE S.year &gt; 2</span>
+<span class="s3">```</span>
+<span class="s2">Show students' name </span><span class="s1">(</span><span class="s2">sname</span><span class="s1">) </span><span class="s2">and age </span><span class="s1">(</span><span class="s2">age</span><span class="s1">) </span><span class="s2">that the students' academic year </span><span class="s1">(</span><span class="s2">year</span><span class="s1">) </span><span class="s2">is higher than 2nd year. </span>
+
+<span class="s2">ii</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT  Cr.crsize</span>
+<span class="s3">FROM Courses as Cr</span>
+<span class="s3">WHERE (Cr.crid = 3);</span>
+<span class="s3">```</span>
+<span class="s2">Show the size </span><span class="s1">(</span><span class="s2">crsize</span><span class="s1">) </span><span class="s2">of the course whose id </span><span class="s1">(</span><span class="s2">crid</span><span class="s1">) </span><span class="s2">is 3.</span>
+
+<span class="s2">iii</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT S.sname</span>
+<span class="s3">FROM Students as S</span>
+<span class="s3">WHERE (S.gpa &gt; 3 AND S.majordept = “Art History”);</span>
+<span class="s3">```</span>
+
+<span class="s2">Show the students whose GPA is higher than 3 in Art History department.</span>
+
+<span class="s2">iv</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT C.clid, C.csize</span>
+<span class="s3">FROM Classrooms C</span>
+<span class="s3">WHERE C.clid IN     ( SELECT Cr.clid</span>
+			<span class="s3">FROM Courses Cr</span>
+			<span class="s3">WHERE Cr.crdept = “Art History”);</span>
+<span class="s3">```</span>
+<span class="s2">Show the classroom id </span><span class="s1">(</span><span class="s2">clid</span><span class="s1">) </span><span class="s2">and classroom size </span><span class="s1">(</span><span class="s2">csize</span><span class="s1">) </span><span class="s2">for Art History department courses.</span>
+
+<span class="s2">v</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT S.sname</span>
+<span class="s3">FROM Students S</span>
+<span class="s3">WHERE EXISTS    ( SELECT *</span>
+			<span class="s3">FROM Courses Cr</span>
+			<span class="s3">WHERE S.majordept = Cr.crdept  AND Cr.crsize &lt;= 100);</span>
+<span class="s3">```</span>
+<span class="s2">Show any students' name whose major department </span><span class="s1">(</span><span class="s2">majordept</span><span class="s1">) </span><span class="s2">has course that course size </span><span class="s1">(</span><span class="s2">crsize</span><span class="s1">) </span><span class="s2">does not exceed 100.</span>
+
+<span class="s2">vi</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT Cr.crid</span>
+<span class="s3">FROM Courses Cr</span>
+<span class="s3">WHERE Cr.clid NOT IN    (SELECT C.clid</span>
+			      	<span class="s3">FROM Classroom C</span>
+				<span class="s3">WHERE C.cbid        IN (SELECT B.bid</span>
+								<span class="s3">FROM Buildings B</span>
+								<span class="s3">WHERE B.bname = “Mudd”) );</span>
+<span class="s3">```</span>
+<span class="s2">Show all the course id </span><span class="s1">(</span><span class="s2">crid</span><span class="s1">) </span><span class="s2">that is not hold in a classroom in Mudd builing.</span>
+
+
+<span class="s0"># </span><span class="s2">Question 2</span>
+
+<span class="s2">Suppose we begin with two tables, </span><span class="s1">***</span><span class="s2">Product</span><span class="s1">*** </span><span class="s2">and </span><span class="s1">***</span><span class="s2">Purchase</span><span class="s1">***</span><span class="s2">.</span>
+
+<span class="s1">***</span><span class="s2">Product</span><span class="s1">***:</span>
+
+<span class="s3">| </span><span class="s1">PName        </span><span class="s3">| </span><span class="s1">Price          </span><span class="s3">| </span><span class="s1">DiscountPrice  </span><span class="s3">| </span><span class="s1">Category </span><span class="s3">| </span><span class="s1">Manufacturer </span><span class="s3">|</span>
+<span class="s3">| ------------- |:-------------:| -----:|:-----------:|:------------:|</span>
+<span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">$19.99 </span><span class="s3">| </span><span class="s1">$16.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">$29.99 </span><span class="s3">| </span><span class="s1">$25.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">SingleTouch </span><span class="s3">| </span><span class="s1">$149.99 </span><span class="s3">| </span><span class="s1">$144.99 </span><span class="s3">| </span><span class="s1">Photography </span><span class="s3">| </span><span class="s1">Canon </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">MultiTouch </span><span class="s3">| </span><span class="s1">$203.99 </span><span class="s3">| </span><span class="s1">$199.99 </span><span class="s3">| </span><span class="s1">Household </span><span class="s3">| </span><span class="s1">Hitachi </span><span class="s3">|</span>
+
+<span class="s1">***</span><span class="s2">Purchase</span><span class="s1">***:</span>
+
+<span class="s3">| </span><span class="s1">ProdName        </span><span class="s3">| </span><span class="s1">Store          </span><span class="s3">|</span>
+<span class="s3">| ------------- |:-------------:|</span>
+<span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">Wiz </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">Ritz </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">Camera </span><span class="s3">| </span><span class="s1">Wiz </span><span class="s3">|</span>
+
+<span class="s2">For each of the following queries, draw the table that would be a result of the query.</span>
+
+<span class="s2">i</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT *</span>
+<span class="s3">FROM Product</span>
+<span class="s3">WHERE DiscountPrice &lt;= 100;</span>
+<span class="s3">```</span>
+<span class="s3">| </span><span class="s1">PName        </span><span class="s3">| </span><span class="s1">Price          </span><span class="s3">| </span><span class="s1">DiscountPrice  </span><span class="s3">| </span><span class="s1">Category </span><span class="s3">| </span><span class="s1">Manufacturer </span><span class="s3">|</span>
+<span class="s3">| ------------- |:-------------:| -----:|:-----------:|:------------:|</span>
+<span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">$19.99 </span><span class="s3">| </span><span class="s1">$16.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">$29.99 </span><span class="s3">| </span><span class="s1">$25.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+
+
+<span class="s2">ii</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT *</span>
+<span class="s3">FROM Purchase</span>
+<span class="s3">LIMIT 3;</span>
+<span class="s3">```</span>
+<span class="s3">| </span><span class="s1">ProdName        </span><span class="s3">| </span><span class="s1">Store          </span><span class="s3">|</span>
+<span class="s3">| ------------- |:-------------:|</span>
+<span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">Wiz </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">Ritz </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">Camera </span><span class="s3">| </span><span class="s1">Wiz </span><span class="s3">|</span>
+
+<span class="s2">iii</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT *</span>
+<span class="s3">FROM Product</span>
+<span class="s3">ORDER BY DiscountPrice</span>
+<span class="s3">```</span>
+<span class="s3">| </span><span class="s1">PName        </span><span class="s3">| </span><span class="s1">Price          </span><span class="s3">| </span><span class="s1">DiscountPrice  </span><span class="s3">| </span><span class="s1">Category </span><span class="s3">| </span><span class="s1">Manufacturer </span><span class="s3">|</span>
+<span class="s3">| ------------- |:-------------:| -----:|:-----------:|:------------:|</span>
+<span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">$19.99 </span><span class="s3">| </span><span class="s1">$16.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">$29.99 </span><span class="s3">| </span><span class="s1">$25.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">SingleTouch </span><span class="s3">| </span><span class="s1">$149.99 </span><span class="s3">| </span><span class="s1">$144.99 </span><span class="s3">| </span><span class="s1">Photography </span><span class="s3">| </span><span class="s1">Canon </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">MultiTouch </span><span class="s3">| </span><span class="s1">$203.99 </span><span class="s3">| </span><span class="s1">$199.99 </span><span class="s3">| </span><span class="s1">Household </span><span class="s3">| </span><span class="s1">Hitachi </span><span class="s3">|</span>
+
+<span class="s2">iv</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT SUM(DiscountPrice - Price)</span>
+<span class="s3">FROM Product</span>
+<span class="s3">WHERE Category = ‘Gadgets’</span>
+<span class="s3">```</span>
+<span class="s3">| </span><span class="s1">SUM(DiscountPrice - Price)</span><span class="s3">|</span>
+<span class="s3">| ------------- |</span>
+<span class="s3">| </span><span class="s1">$7 </span><span class="s3">|</span>
+
+<span class="s2">v</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT *</span>
+<span class="s3">FROM Product</span>
+<span class="s3">JOIN Purchase ON Product.PName = Purchase.ProdName</span>
+<span class="s3">```</span>
+<span class="s3">| </span><span class="s1">PName        </span><span class="s3">| </span><span class="s1">Price          </span><span class="s3">| </span><span class="s1">DiscountPrice  </span><span class="s3">| </span><span class="s1">Category </span><span class="s3">| </span><span class="s1">Manufacturer </span><span class="s3">|</span><span class="s1">ProdName </span><span class="s3">| </span><span class="s1">Store</span><span class="s3">|</span>
+<span class="s3">| ------------- |:-------------:| -----:|:-----------:|:------------:|:-------:|:-------:|</span>
+<span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">$19.99 </span><span class="s3">| </span><span class="s1">$16.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">Wiz</span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">$29.99 </span><span class="s3">| </span><span class="s1">$25.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">Ritz</span><span class="s3">|</span>
+
+
+<span class="s2">vi</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT *</span>
+<span class="s3">FROM Purchase</span>
+<span class="s3">JOIN Product ON Purchase.ProdName = Product.PName</span>
+<span class="s3">```</span>
+<span class="s3">| </span><span class="s1">ProdName   </span><span class="s3">| </span><span class="s1">Store  </span><span class="s3">| </span><span class="s1">PName    </span><span class="s3">| </span><span class="s1">Price   </span><span class="s3">| </span><span class="s1">DiscountPrice  </span><span class="s3">| </span><span class="s1">Category </span><span class="s3">| </span><span class="s1">Manufacturer </span><span class="s3">|</span>
+<span class="s3">| ------------- |:-------------:|:------------- |:-------------:| -----:|:-----------:|:------------:|</span>
+<span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">Wiz </span><span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">$19.99 </span><span class="s3">| </span><span class="s1">$16.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">Ritz </span><span class="s3">|</span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">$29.99 </span><span class="s3">| </span><span class="s1">$25.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+
+
+<span class="s2">vii</span><span class="s1">)</span>
+<span class="s3">```</span>
+<span class="s3">SELECT *</span>
+<span class="s3">FROM Purchase</span>
+<span class="s3">LEFT OUTER JOIN Product ON Purchase.ProdName = Product.PName</span>
+<span class="s3">```</span>
+<span class="s3">| </span><span class="s1">ProdName   </span><span class="s3">| </span><span class="s1">Store  </span><span class="s3">| </span><span class="s1">PName    </span><span class="s3">| </span><span class="s1">Price   </span><span class="s3">| </span><span class="s1">DiscountPrice  </span><span class="s3">| </span><span class="s1">Category </span><span class="s3">| </span><span class="s1">Manufacturer </span><span class="s3">|</span>
+<span class="s3">| ------------- |:-------------:|:------------- |:-------------:| -----:|:-----------:|:------------:|</span>
+<span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">Wiz </span><span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">$19.99 </span><span class="s3">| </span><span class="s1">$16.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">Ritz </span><span class="s3">|</span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">$29.99 </span><span class="s3">| </span><span class="s1">$25.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">Camera </span><span class="s3">| </span><span class="s1">Wiz </span><span class="s3">|     </span><span class="s1">NULL</span><span class="s3">|          </span><span class="s1">NULL</span><span class="s3">|   </span><span class="s1">NULL</span><span class="s3">|    </span><span class="s1">NULL</span><span class="s3">|   </span><span class="s1">NULL</span><span class="s3">|</span>
+
+<span class="s0"># </span><span class="s2">Question 3</span>
+
+<span class="s2">Perform the following operations in set algebra</span><span class="s1">:</span>
+
+<span class="s2">Assume A and B are both sets, C and D are both multisets.</span>
+
+<span class="s2">A = {2, 1, 3}, B = {3, 1, 4}, C = {2, 1, 3, 1}, D = {1, x, y}.</span>
+
+<span class="s0">1. </span><span class="s2">What is A U B, where U is union? &lt;br/&gt;</span>
+<span class="s2">{2,1,3,4}</span>
+<span class="s0">2. </span><span class="s2">What is B U A? &lt;br/&gt;</span>
+<span class="s2">{3,1,4,2}</span>
+<span class="s0">3. </span><span class="s2">What is D U C? &lt;br/&gt;</span>
+<span class="s2">{x, y, 2,1,3,1}</span>
+<span class="s0"># </span><span class="s2">Question 4</span>
+
+<span class="s2">Suppose we're given a table </span><span class="s1">***</span><span class="s2">Product</span><span class="s1">***:</span>
+
+<span class="s3">|</span><span class="s1">pid</span><span class="s3">| </span><span class="s1">PName        </span><span class="s3">| </span><span class="s1">Price          </span><span class="s3">| </span><span class="s1">DiscountPrice  </span><span class="s3">| </span><span class="s1">Category </span><span class="s3">| </span><span class="s1">Manufacturer </span><span class="s3">|</span>
+<span class="s3">|----| ------------- |:-------------:| -----:|:-----------:|:------------:|</span>
+<span class="s3">| </span><span class="s1">18 </span><span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">$19.99 </span><span class="s3">| </span><span class="s1">$16.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">70 </span><span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">$29.99 </span><span class="s3">| </span><span class="s1">$25.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">32 </span><span class="s3">| </span><span class="s1">SingleTouch </span><span class="s3">| </span><span class="s1">$149.99 </span><span class="s3">| </span><span class="s1">$144.99 </span><span class="s3">| </span><span class="s1">Photography </span><span class="s3">| </span><span class="s1">Canon </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">67 </span><span class="s3">| </span><span class="s1">MultiTouch </span><span class="s3">| </span><span class="s1">$203.99 </span><span class="s3">| </span><span class="s1">$199.99 </span><span class="s3">| </span><span class="s1">Household </span><span class="s3">| </span><span class="s1">Hitachi </span><span class="s3">|</span>
+
+<span class="s2">Let S1 consist of the first two tuples of </span><span class="s1">***</span><span class="s2">Product</span><span class="s1">***</span><span class="s2">, S2 be the last two tuples of </span><span class="s1">***</span><span class="s2">Product</span><span class="s1">***</span><span class="s2">, and S is the whole instance. Show the results of the following operations.</span>
+
+<span class="s0">1. </span><span class="s2">Left outer join of S with itself, with the join condition being pid=pid.</span>
+    <span class="s0">- </span><span class="s1">_**</span><span class="s2">repeat</span><span class="s1">**_</span>
+    
+    <span class="s3">|</span><span class="s1">pid</span><span class="s3">| </span><span class="s1">PName        </span><span class="s3">| </span><span class="s1">Price          </span><span class="s3">| </span><span class="s1">DiscountPrice  </span><span class="s3">| </span><span class="s1">Category </span><span class="s3">| </span><span class="s1">Manufacturer </span><span class="s3">|</span>
+    <span class="s3">|----| ------------- |:-------------:| -----:|:-----------:|:------------:|</span>
+    <span class="s3">| </span><span class="s1">18 </span><span class="s3">| </span><span class="s1">Gizmo </span><span class="s3">| </span><span class="s1">$19.99 </span><span class="s3">| </span><span class="s1">$16.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+    <span class="s3">| </span><span class="s1">70 </span><span class="s3">| </span><span class="s1">PowerGizmo </span><span class="s3">| </span><span class="s1">$29.99 </span><span class="s3">| </span><span class="s1">$25.99 </span><span class="s3">| </span><span class="s1">Gadgets </span><span class="s3">| </span><span class="s1">GWorks </span><span class="s3">|</span>
+    <span class="s3">| </span><span class="s1">32 </span><span class="s3">| </span><span class="s1">SingleTouch </span><span class="s3">| </span><span class="s1">$149.99 </span><span class="s3">| </span><span class="s1">$144.99 </span><span class="s3">| </span><span class="s1">Photography </span><span class="s3">| </span><span class="s1">Canon </span><span class="s3">|</span>
+    <span class="s3">| </span><span class="s1">67 </span><span class="s3">| </span><span class="s1">MultiTouch </span><span class="s3">| </span><span class="s1">$203.99 </span><span class="s3">| </span><span class="s1">$199.99 </span><span class="s3">| </span><span class="s1">Household </span><span class="s3">| </span><span class="s1">Hitachi </span><span class="s3">|</span>
+<span class="s0">2. </span><span class="s2">Right outer join of S with itself, with the join condition being pid=pid.</span>
+    <span class="s0">- </span><span class="s2">same as 1</span>
+<span class="s0">3. </span><span class="s2">Full outer join of S with itself, with the join condition being pid=pid.</span>
+    <span class="s0">- </span><span class="s2">same as 1</span>
+<span class="s0">4. </span><span class="s2">Left outer join of S1 with S2, with the join condition being pid=pid.</span>
+    <span class="s0">- </span><span class="s2">S1 + NULL</span>
+<span class="s0">5. </span><span class="s2">Right outer join of S1 with S2, with the join condition being pid=pid.</span>
+    <span class="s0">- </span><span class="s2">S2 + NULL</span>
+<span class="s0">6. </span><span class="s2">Full outer join of S1 with S2, with the join condition being pid=pid.</span>
+    <span class="s0">- </span><span class="s2">row 1 and 2</span><span class="s1">: </span><span class="s2">S1 + NULL</span>
+    <span class="s0">- </span><span class="s2">row 3 and 4</span><span class="s1">: </span><span class="s2">NULL+S2</span>
+
+<span class="s0"># </span><span class="s2">Question 5</span>
+
+<span class="s2">Consider tables or relations R and S where R has n tuples and S has m tuples, with n </span><span class="s1">&gt;</span><span class="s2">= m </span><span class="s1">&gt; </span><span class="s2">0. Give the minimum and maximum number of tuples that can be a result of the following expressions.</span>
+
+<span class="s0">1. </span><span class="s2">R U S, where U is union.</span>
+    <span class="s0">- </span><span class="s2">min</span><span class="s1">: </span><span class="s2">n, max</span><span class="s1">: </span><span class="s2">n+m</span>
+<span class="s0">2. </span><span class="s2">R intersect S.</span>
+    <span class="s0">- </span><span class="s2">min</span><span class="s1">: </span><span class="s2">0, max</span><span class="s1">: </span><span class="s2">m</span>
+<span class="s0">3. </span><span class="s2">R inner join S.</span>
+    <span class="s0">- </span><span class="s2">min</span><span class="s1">: </span><span class="s2">0, max</span><span class="s1">: </span><span class="s2">m</span>
+<span class="s0">4. </span><span class="s2">S full outer join S.</span>
+    <span class="s0">- </span><span class="s2">min</span><span class="s1">: </span><span class="s2">m, max</span><span class="s1">: </span><span class="s2">m</span>
+<span class="s0">5. </span><span class="s2">R - S, where - is set difference, defined as the set of elements in R that do not belong to S.</span>
+    <span class="s0">- </span><span class="s2">min</span><span class="s1">: </span><span class="s2">n-m, max</span><span class="s1">: </span><span class="s2">n</span>
+<span class="s0">6. </span><span class="s2">S - R, where - is set difference, defined as the set of elements in S that do not belong to R.</span>
+    <span class="s0">- </span><span class="s2">min</span><span class="s1">: </span><span class="s2">0, max</span><span class="s1">: </span><span class="s2">m</span>
+   
+<span class="s0"># </span><span class="s2">Question 6</span><span class="s1">: </span><span class="s2">ACID</span>
+
+<span class="s2">From the following scenarios, consider whether the scenario is a failure of 1</span><span class="s1">) </span><span class="s2">atomicity, 2</span><span class="s1">) </span><span class="s2">consistency, 3</span><span class="s1">) </span><span class="s2">isolation or 4</span><span class="s1">) </span><span class="s2">durability </span><span class="s1">(</span><span class="s2">the letters in ACID</span><span class="s1">)</span><span class="s2">. Choose one failure that bests fits the scenario. Provide a short </span><span class="s1">(&lt;</span><span class="s2">= 1 sentence</span><span class="s1">) </span><span class="s2">explanation of why.</span>
+
+<span class="s2">i</span><span class="s1">) </span><span class="s2">The file system has declared that a file is written. But because of hardware failure in the disk controller, the writes disappeared and were never written to disk.</span>
+   <span class="s0">- </span><span class="s2">Failure of durability. The effect of written does not remain in the DB.</span>
+    
+<span class="s2">ii</span><span class="s1">) </span><span class="s2">We want to write a value to a 16-byte value to memory. However, because of a power outage right when we attempt to write the value, we only manage to write to the first 8-bytes.</span>
+   <span class="s0">- </span><span class="s2">Failure of consistency. The value written does not satisfy the specified integrity constrains </span><span class="s1">(</span><span class="s2">16-byte</span><span class="s1">)</span><span class="s2">.</span>
+
+<span class="s2">iii</span><span class="s1">) </span><span class="s2">We are working on a database for a bank. We have an explicit constraint that, in the database, all clients must have an account balance of at minimum $100. However, because of a bug in the implementation of the database, the constraint is not enforced in a transaction and we have an account with a balance of $80.</span>
+   <span class="s0">- </span><span class="s2">Failure of consistency. Not meet the constraint of minimum account balance.</span>
+   
+<span class="s2">iv</span><span class="s1">) </span><span class="s2">Two users are accessing the same variable at around the same time. The starting value is 15. The first user, user A, wants to increment the value by 10. The other user, user B, wants to decrement the value by 5. User A reads the starting value, and before committing his change, user B comes in and reads the starting value and decrements the value and sets the value to 10. User A does not notice this and updates the value to 25 anyway.</span>
+   <span class="s0">- </span><span class="s2">Failure of isolation. The sequence of the two transactions affects the final result. </span>
+
+<span class="s2">v</span><span class="s1">) </span><span class="s2">There is an explicit constraint on a database that the total value of credits in the system must sum up to 1000. A user sends a transaction that is in explicit violation of the constraint and would lead to the total value of credits in the system increasing to 1100. Nonetheless, the database accepts the transaction.</span>
+   <span class="s0">- </span><span class="s2">Failure of consistency. Not always satisfy the constrain.</span>
+   
+<span class="s2">vi</span><span class="s1">) </span><span class="s2">A user tries to rename a file in their shared folder </span><span class="s1">(</span><span class="s2">e.g., Dropbox or Google Drive</span><span class="s1">)</span><span class="s2">. The file sharing program splits the file rename into two steps</span><span class="s1">: </span><span class="s2">it first copies a version of the file with a new name, and then deletes the old version. After the first step of the rename process, the file sharing program crashes. Now the user has two versions of the folder</span><span class="s1">: </span><span class="s2">one with the old name, and one with a new name.</span>
+   <span class="s0">- </span><span class="s2">Failure of atomicity. There should be no change of the folder as there is a crash in the middle of the transaction.</span>
+   
+<span class="s2">vii</span><span class="s1">) </span><span class="s2">We are working on a big matrix operation. We store the matrix in memory. This operation is mutable, which means that the matrix is being changed during the operation. After finishing the operation, we hope to write to the hard disk. However, because of a malfunction on the disk hand, it never gets written to the disk. Next time, we want to load the changed matrix, the file system cannot retrieve the matrix and it gives us an error.</span>
+   <span class="s0">- </span><span class="s2">Failure of durability. The effect of the committed transaction should remain. </span>
+    
+<span class="s2">viii</span><span class="s1">) </span><span class="s2">Two users are trying to edit the same sentence on a Google Doc</span><span class="s1">: &quot;</span><span class="s2">I love Rocknroll</span><span class="s1">&quot;</span><span class="s2">. The first user tries to edit the sentence to</span><span class="s1">: &quot;</span><span class="s2">I love 80's Rocknroll</span><span class="s1">&quot;</span><span class="s2">. The second user is trying to write</span><span class="s1">: &quot;</span><span class="s2">I love Guns N Roses</span><span class="s1">&quot;</span><span class="s2">. Since they are editing simultaneously, Google Doc produces the following sentence</span><span class="s1">: &quot;</span><span class="s2">I love 80's Guns N Roses</span><span class="s1">&quot;</span><span class="s2">.</span>
+   <span class="s0">- </span><span class="s2">Failure of isolation. The output is not the same as the two transaction execute in isolation.</span>
+   
+   
+<span class="s0"># </span><span class="s2">Question 7</span>
+
+<span class="s2">We have two systems in charge of running a batch of jobs. System A runs 40 jobs in 30 seconds, and System B runs the same 40 jobs in 35 seconds.</span>
+<span class="s0">1. </span><span class="s2">What is the throughput of the system on the running of the jobs in jobs/sec?</span>
+    <span class="s0">- </span><span class="s2">40/30 + 40/35 = 52/21 = 2.48 jobs/sec.</span>
+<span class="s0">2. </span><span class="s2">Which system performs better? By how much?</span>
+    <span class="s0">- </span><span class="s2">A is better. </span><span class="s1">(</span><span class="s2">40/30</span><span class="s1">) </span><span class="s2">/ </span><span class="s1">(</span><span class="s2">40/35</span><span class="s1">) </span><span class="s2">= 7/6 = 1.167. System A is 1.167 faster than B.</span>
+<span class="s0">3. </span><span class="s2">Suppose that we have discovered a performance issue on System B and fixed it. We now have the ability to run the same 40 jobs in 25 seconds. What is the speedup of the improved System B over the original?</span>
+    <span class="s0">- </span><span class="s1">(</span><span class="s2">40/25</span><span class="s1">)</span><span class="s2">/</span><span class="s1">(</span><span class="s2">40/35</span><span class="s1">) </span><span class="s2">= 1.4</span>
+<span class="s0">4. </span><span class="s2">What is the average latency of the jobs in System A </span><span class="s1">(</span><span class="s2">choose the right answer and explain why</span><span class="s1">):</span>
+
+	<span class="s2">A. 30 seconds</span>
+
+	<span class="s2">B. 0.75 seconds</span>
+
+	<span class="s2">C. 1.3 seconds</span>
+
+	<span class="s2">D. The average latency is unknown</span>
+	
+	<span class="s0">- </span><span class="s2">B. 30/40 = 0.75 seconds/job </span>
+
+<span class="s0"># </span><span class="s2">Question 8 - Amdahl's Law</span>
+
+<span class="s2">Your boss asks you to improve the performance of a system. Before you begin optimizing the system, we want to guess how much improvement we can get on performance time. For each of the following optimizations, figure out the speedup.</span>
+
+<span class="s0">1. </span><span class="s2">Improve the GPU compilation software used 50% of the time by 10%</span>
+   <span class="s0">- </span><span class="s2">2/11 = 0.182</span>
+<span class="s0">2. </span><span class="s2">Improve the memory pipeline used 5% of the time by 10x</span>
+    <span class="s0">- </span><span class="s2">200/191 = 1.047</span>
+<span class="s0">3. </span><span class="s2">Improve the speed of I/O from disk used 15% of the time by 10x</span>
+    <span class="s0">- </span><span class="s2">173/200 = 1.156</span>
+<span class="s0">4. </span><span class="s2">Which of these is therefore the optimization that you should spend your time on, which gives the most speedup improvement?</span>
+    <span class="s0">- </span><span class="s2">Improving the GPU.?</span>
+    
+ 
+<span class="s0"># </span><span class="s2">Question 9</span>
+
+<span class="s2">We first describe the memory hierarchy. Suppose that we have a latency to the CPU cache of 5ns, latency to memory of 25ns, and latency to flash of 1ms. For each of the following situations </span><span class="s1">(</span><span class="s2">where all we consider are random reads from a memory address</span><span class="s1">)</span><span class="s2">, calculate the average latency.</span>
+
+<span class="s0">1. </span><span class="s2">Hit CPU cache 80% of reads and have to go to memory for the remaining 20% of reads.</span>
+    <span class="s0">- </span><span class="s2">0.8 * 5 + 0.2 * 25 = 9 ns</span>
+<span class="s0">2. </span><span class="s2">Hit CPU cache 95% of reads but have to go to flash for the remaining 5% of reads.</span>
+    <span class="s0">- </span><span class="s2">0.95 * 5 + 0.05 * 1000 = 54.75 ns</span>
+<span class="s0">3. </span><span class="s2">Hit memory 85% of reads but have to go to flash for the remaining 15% of reads.</span>
+    <span class="s0">- </span><span class="s2">0.85 * 25 + 0.15 * 1000 = 171.25 ns</span>
+
+<span class="s0"># </span><span class="s2">Question 10</span>
+
+<span class="s2">A computer systems is using a magnetic disk </span><span class="s1">(</span><span class="s2">hard disk</span><span class="s1">) </span><span class="s2">as storage. Suppose that the hard disk has a capacity of 300 GB, an RPM </span><span class="s1">(</span><span class="s2">rotations per minute</span><span class="s1">) </span><span class="s2">of 10000, an average seek of 4ms, and a max transfer rate of 100MB/s.</span>
+
+<span class="s0">1. </span><span class="s2">First calculate T</span><span class="s1">_</span><span class="s2">{rot}, the time per rotation.</span>
+    <span class="s0">- </span><span class="s2">T</span><span class="s1">_</span><span class="s2">{rot} = 1/10000 minute per rotation = 6 ms per rotation</span>
+<span class="s0">2. </span><span class="s2">Calculate T</span><span class="s1">_</span><span class="s2">{transfer}, the time taken to transfer a 4KB page.</span>
+    <span class="s0">- </span><span class="s2">T</span><span class="s1">_</span><span class="s2">{transfer} = 4 * 0.001 / 100 = 0.00004 s = 0.04 ms</span>
+<span class="s0">3. </span><span class="s2">Assuming that we are reading from random positions on disk, what is the T</span><span class="s1">_</span><span class="s2">{I/O} or time to perform one I/O operation of a 4KB read? What is thus the rate of I/O, under a random workload, in MB/sec?</span>
+    <span class="s0">- </span><span class="s2">T</span><span class="s1">_</span><span class="s2">{I/O} = 4 + 6 + 0.04 = 10.04 ms</span>
+    <span class="s0">- </span><span class="s2">rate of I/O = 4 * 0.001 / </span><span class="s1">(</span><span class="s2">10.04 * 1000</span><span class="s1">) </span><span class="s2">= 3.984 * 10^-7 MB/sec</span>
+<span class="s0">4. </span><span class="s2">Assume that we are reading 4KB pages sequentially on disk. What is different about the necessary I/Os to accomplish this task? What is the time taken to transfer a 125MB file? What is thus the rate of I/O, under a sequential workload, file in MB/sec?</span>
+    <span class="s0">- </span><span class="s2">The I/O then does not require rotation.</span>
+    <span class="s0">- </span><span class="s2">T</span><span class="s1">_</span><span class="s2">{I/O} = 4 + 125/100 / 1000 = 4.00125 ms</span>
+    <span class="s0">- </span><span class="s2">rate of I/O = 125 / 4.00125 /1000 = 3.124 * 10^-2 MB/sec</span>
+    
+  
+<span class="s0"># </span><span class="s2">Question 11</span>
+
+<span class="s2">Suppose that we have a rack that we are using to host our website. The rack consists of 42U. Assume that each network switch uses 10 watts and that each server uses 200 watts. Suppose that we have a Total Facility Power of 6000. What is the PUE of the following configurations?</span>
+
+<span class="s0">1. </span><span class="s2">10 1U network switches with 16 2U servers.</span>
+    <span class="s0">- </span><span class="s2">6000 / </span><span class="s1">(</span><span class="s2">10 * 10 + 16 * 200</span><span class="s1">) </span><span class="s2">= 1.818</span>
+<span class="s0">2. </span><span class="s2">4 1U network switches with 19 2U servers.</span>
+    <span class="s0">- </span><span class="s2">6000 / </span><span class="s1">(</span><span class="s2">4 * 10 + 19 * 200</span><span class="s1">) </span><span class="s2">= 1.5625</span>
+<span class="s0">3. </span><span class="s2">21 2U servers.</span>
+    <span class="s0">- </span><span class="s2">6000 / </span><span class="s1">(</span><span class="s2">21 * 200</span><span class="s1">) </span><span class="s2">= 1.4286</span>
+    
+
+<span class="s0"># </span><span class="s2">Question 12</span>
+
+<span class="s2">Suppose we have an excerpt of a write-ahead log of table </span><span class="s1">***</span><span class="s2">Payroll</span><span class="s1">*** </span><span class="s2">as</span><span class="s1">:</span>
+
+<span class="s3">| </span><span class="s1">LSN </span><span class="s3">| </span><span class="s1">Prev LSN </span><span class="s3">| </span><span class="s1">Tx ID </span><span class="s3">| </span><span class="s1">Type </span><span class="s3">| </span><span class="s1">Loc </span><span class="s3">| </span><span class="s1">Old Val </span><span class="s3">| </span><span class="s1">New Val </span><span class="s3">|</span>
+<span class="s3">| :---: | :---: | :---: | :---: | :---: | :---: | :---: |</span>
+<span class="s3">| </span><span class="s1">400 </span><span class="s3">| </span><span class="s1">399 </span><span class="s3">| </span><span class="s1">60 </span><span class="s3">| </span><span class="s1">UPDATE </span><span class="s3">| </span><span class="s1">A.Salary </span><span class="s3">| </span><span class="s1">94 </span><span class="s3">| </span><span class="s1">99 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">401 </span><span class="s3">| </span><span class="s1">0 </span><span class="s3">| </span><span class="s1">68 </span><span class="s3">| </span><span class="s1">BEGIN </span><span class="s3">| </span><span class="s1">null </span><span class="s3">| </span><span class="s1">null </span><span class="s3">| </span><span class="s1">null </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">402 </span><span class="s3">| </span><span class="s1">400 </span><span class="s3">| </span><span class="s1">60 </span><span class="s3">| </span><span class="s1">COMMIT </span><span class="s3">| </span><span class="s1">null </span><span class="s3">| </span><span class="s1">null </span><span class="s3">| </span><span class="s1">null </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">403 </span><span class="s3">| </span><span class="s1">401 </span><span class="s3">| </span><span class="s1">68 </span><span class="s3">| </span><span class="s1">UPDATE </span><span class="s3">| </span><span class="s1">E.Salary </span><span class="s3">| </span><span class="s1">17.5 </span><span class="s3">| </span><span class="s1">35 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">404 </span><span class="s3">| </span><span class="s1">0 </span><span class="s3">| </span><span class="s1">69 </span><span class="s3">| </span><span class="s1">BEGIN </span><span class="s3">| </span><span class="s1">null </span><span class="s3">| </span><span class="s1">null </span><span class="s3">| </span><span class="s1">null </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">405 </span><span class="s3">| </span><span class="s1">403 </span><span class="s3">| </span><span class="s1">68 </span><span class="s3">| </span><span class="s1">UPDATE </span><span class="s3">| </span><span class="s1">F.Salary </span><span class="s3">| </span><span class="s1">17.5 </span><span class="s3">| </span><span class="s1">35 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">406 </span><span class="s3">| </span><span class="s1">405 </span><span class="s3">| </span><span class="s1">68 </span><span class="s3">| </span><span class="s1">COMMIT </span><span class="s3">| </span><span class="s1">null </span><span class="s3">| </span><span class="s1">null </span><span class="s3">| </span><span class="s1">null </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">407 </span><span class="s3">| </span><span class="s1">404 </span><span class="s3">| </span><span class="s1">69 </span><span class="s3">| </span><span class="s1">UPDATE </span><span class="s3">| </span><span class="s1">F.Salary </span><span class="s3">| </span><span class="s1">35 </span><span class="s3">| </span><span class="s1">40 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">408 </span><span class="s3">| </span><span class="s1">392 </span><span class="s3">| </span><span class="s1">62 </span><span class="s3">| </span><span class="s1">UPDATE </span><span class="s3">| </span><span class="s1">B.Salary </span><span class="s3">| </span><span class="s1">103 </span><span class="s3">| </span><span class="s1">109 </span><span class="s3">|</span>
+
+<span class="s2">where each transaction has a unique transaction id </span><span class="s1">(</span><span class="s2">Tx ID</span><span class="s1">) </span><span class="s2">and each log entry has a log sequence number </span><span class="s1">(</span><span class="s2">LSN</span><span class="s1">)</span><span class="s2">.</span>
+
+<span class="s2">Assume all transactions with Tx ID below 60 has been committed and the table </span><span class="s1">***</span><span class="s2">Payroll</span><span class="s1">*** </span><span class="s2">at the time right before log 400 is</span><span class="s1">:</span>
+
+<span class="s3">| </span><span class="s1">Name </span><span class="s3">| </span><span class="s1">Title </span><span class="s3">| </span><span class="s1">Salary </span><span class="s3">|</span>
+<span class="s3">| :---: | :---: | :---: |</span>
+<span class="s3">| </span><span class="s1">A </span><span class="s3">| </span><span class="s1">Professor </span><span class="s3">| </span><span class="s1">94 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">B </span><span class="s3">| </span><span class="s1">Professor </span><span class="s3">| </span><span class="s1">103 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">C </span><span class="s3">| </span><span class="s1">Staff </span><span class="s3">| </span><span class="s1">62 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">D </span><span class="s3">| </span><span class="s1">Staff </span><span class="s3">| </span><span class="s1">58 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">E </span><span class="s3">| </span><span class="s1">Student </span><span class="s3">| </span><span class="s1">17.5 </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">F </span><span class="s3">| </span><span class="s1">Student </span><span class="s3">| </span><span class="s1">17.5</span>
+
+<span class="s2">Show all records that has been updated in the database at the following time</span><span class="s1">:</span>
+
+<span class="s0">1. </span><span class="s2">All logs before and including 404 are applied.</span>
+<span class="s0">2. </span><span class="s2">All logs before and including 406 are applied.</span>
+<span class="s0">3. </span><span class="s2">All logs before and including 408 are applied.</span>
+
+<span class="s2">For example, a record can be represented as </span><span class="s1">(</span><span class="s2">A, Professor, 94</span><span class="s1">)</span><span class="s2">.</span>
+
+<span class="s0"># </span><span class="s2">Question 13</span>
+
+<span class="s2">Consider a database with objects A and B and assume that there are two transactions T1 and T2. Below, R is for read, W is for write, Commit is for committing the transaction, and Abort is for aborting the transaction.</span>
+
+<span class="s2">a.</span>
+
+<span class="s3">| </span><span class="s1">T1 </span><span class="s3">| </span><span class="s1">T2 </span><span class="s3">|</span>
+<span class="s3">| :---: | :---: |</span>
+<span class="s3">| </span><span class="s1">R(A) </span><span class="s3">|     |</span>
+<span class="s3">|      | </span><span class="s1">R(A)  </span><span class="s3">|</span>
+<span class="s3">|      | </span><span class="s1">W(A)  </span><span class="s3">|</span>
+<span class="s3">|  	| </span><span class="s1">Commit </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">R(A) </span><span class="s3">|       |</span>
+
+<span class="s2">b.</span>
+
+<span class="s3">| </span><span class="s1">T1 </span><span class="s3">| </span><span class="s1">T2 </span><span class="s3">|</span>
+<span class="s3">| :---:| :---:|</span>
+<span class="s3">| </span><span class="s1">R(A)  </span><span class="s3">|   |</span>
+<span class="s3">| </span><span class="s1">W(A)  </span><span class="s3">| |</span>
+<span class="s3">| </span><span class="s1">Commit  </span><span class="s3">|  |</span>
+<span class="s3">|  | </span><span class="s1">R(A)  </span><span class="s3">|</span>
+<span class="s3">|  | </span><span class="s1">W(A) </span><span class="s3">|</span>
+<span class="s3">|   | </span><span class="s1">Commit  </span><span class="s3">|</span>
+
+<span class="s2">c.</span>
+
+<span class="s3">| </span><span class="s1">T1 </span><span class="s3">| </span><span class="s1">T2 </span><span class="s3">|</span>
+<span class="s3">| :---: | :---: |</span>
+<span class="s3">| </span><span class="s1">R(A)  </span><span class="s3">|   |</span>
+<span class="s3">| </span><span class="s1">W(A)  </span><span class="s3">| |</span>
+<span class="s3">|   | </span><span class="s1">R(A) </span><span class="s3">|</span>
+<span class="s3">|   | </span><span class="s1">W(A)  </span><span class="s3">|</span>
+<span class="s3">|   | </span><span class="s1">Commit </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">R(B) </span><span class="s3">|  |</span>
+<span class="s3">| </span><span class="s1">W(B)  </span><span class="s3">|    |</span>
+<span class="s3">| </span><span class="s1">Abort </span><span class="s3">|  |</span>
+
+<span class="s2">d.</span>
+
+<span class="s3">| </span><span class="s1">T1 </span><span class="s3">| </span><span class="s1">T2 </span><span class="s3">|</span>
+<span class="s3">| :---:| :---: |</span>
+<span class="s3">| </span><span class="s1">W(A)  </span><span class="s3">|   |</span>
+<span class="s3">|  </span><span class="s1">W(C) </span><span class="s3">| |</span>
+<span class="s3">|    | </span><span class="s1">W(A) </span><span class="s3">|</span>
+<span class="s3">|   | </span><span class="s1">W(B)  </span><span class="s3">|</span>
+<span class="s3">|   | </span><span class="s1">Commit </span><span class="s3">|</span>
+<span class="s3">| </span><span class="s1">W(B) </span><span class="s3">|  |</span>
+<span class="s3">| </span><span class="s1">Commit </span><span class="s3">| |</span>
+
+
+<span class="s0">1. </span><span class="s2">For each of the above schedules, which one is</span>
+
+    <span class="s2">a. a read-write conflict</span>
+    
+    <span class="s2">b. a write-read conflict</span>
+    
+    <span class="s2">c. a write-write conflict</span>
+    
+    <span class="s2">d. a schedule without a conflict</span>
+    
+<span class="s0">2. </span><span class="s2">For each of the above schedules that have a conflict, show that Strict 2PL disallows these schedules.</span>
+<span class="s0">3. </span><span class="s2">Why is there no such thing as a read-read conflict?</span>
+
+<span class="s0"># </span><span class="s2">Question 14</span>
+
+<span class="s2">Consider two transactions T1 and T2 in a database with objects X and Y. T1 reads and writes X then reads and writes Y. T2 first reads X and Y and then writes X and Y.</span>
+
+<span class="s0">1. </span><span class="s2">Give an example schedule that is not serializable. Explain why your schedule is not serializable.</span>
+<span class="s0">2. </span><span class="s2">Show that strict 2PL disallows this schedule. Analyze whether deadlock is possible.</span>
+<span class="s0">3. </span><span class="s2">Explain how deadlock is handled.</span>
+
+<span class="s0"># </span><span class="s2">Question 15</span>
+
+<span class="s2">As transaction conflicts are common in the case of concurrency updates, Jerry Mouse thinks about handling conflicts by splitting a transaction into several parts</span><span class="s1">: </span><span class="s2">the splitted parts altogether produce the same and consistent updates and outputs as the original intergrated transactions, but each requires less locks.</span>
+
+<span class="s2">Tell Jerry whether the following splitting method works or not and explain him the reason.</span>
+
+ <span class="s2">”Suppose transaction T accesses object X and Y, and any other transaction S accesses at most one of X or Y and nothing else. Therefore, T can be splitted into two parts, one of which accesses X and the other accesses Y.”</span>
+
+<span class="s0"># </span><span class="s2">Question 16</span>
+
+<span class="s2">A database is usually replicated on multiple sites for better performance. Suppose a transaction executing from a cellphone visits different replicas and reads and writes </span><span class="s1">(</span><span class="s2">parts of</span><span class="s1">) </span><span class="s2">the database.</span>
+
+<span class="s2">Design a simple protocol whereby a transaction can read globally-consistent data from the database replica “nearest” to it. In particular, what should a reading transaction lock? what should a writing transaction lock?</span>
+
+<span class="s2">Will your transaction lead to deadlocks? If so, how can you avoid it?</span></pre>
+</body>
+</html>
